@@ -3,17 +3,17 @@ A Repo with instructions on how to set up a Raspberry Pi Zero W to be a plug and
 
 This project documents how to configure a Raspberry Pi Zero W as a portable router, capable of chanelling wifi signals to our device over ethernet (or more suitably, ethernet over USB). For this project, I've used OpenWRT to run the Pi as a Router, instead of configuring Raspbian itself. OpenWRT has insanely low resource requirements and runs phenominally on the Zeros - it also has a great interface and removes all the bloat we would have with Raspbian! OpenWRT is running Linux under the hood which means I immediately liked it, but this means all of our normal Raspbian commands will work in the terminal. Most of the steps are pretty standard across OpenWRT disributions so you should be able to apply these steps to most Pi's (I've tried to mark the ones specific to the Zero). 
 
-Originally I was just keen to play around with OpenWRT before overhauling my home network, but after getting aquainted with it on my Pi 4 I realised that I could set up a Zero as a super-portable, usb-powered router and got going with this project over the weekend! Towards the end of the project, the algorithms blessed me with Network Chuck's (https://www.youtube.com/watch?v=jlHWnKVpygw&list=LL&index=7&t=1194s&ab_channel=NetworkChuck) video doing a similar thing, and I just had to add the VPN functionality too! I've included the instructions here to add the VPN but his video is really worth watching and following for that feature - you won't regret it! I should also note that all credit for the VPN addition goes to him - I just followed those steps and documented them here basically. I also added the ad-blocker on after once I'd shopped through the packages on offer, so this functionality is really easy to plug on and remove at the end of it all if you're not happy with the performance after adding it. 
+Originally I was just keen to play around with OpenWRT before overhauling my home network, but after getting aquainted with it on my Pi 4 I realised that I could set up a Zero as a super-portable, usb-powered router and got going with this project over the weekend! Towards the end of the project, the algorithms blessed me with [Network Chuck's](https://www.youtube.com/watch?v=jlHWnKVpygw&list=LL&index=7&t=1194s&ab_channel=NetworkChuck) video doing a similar thing, and I just had to add the VPN functionality too! I've included the instructions here to add the VPN but his video is really worth watching and following for that feature - you won't regret it! I should also note that all credit for the VPN addition goes to him - I just followed those steps and documented them here basically. I also added the ad-blocker on after once I'd shopped through the packages on offer, so this functionality is really easy to plug on and remove at the end of it all if you're not happy with the performance after adding it. 
 
 After following these instructions you should have a Pi Zero router that can act as a gateway between your device and a public wifi network. We will have conifigured our gateway to run a VPN for some privacy and an ad-blocker to give it a little more functionality (although both of these are optional additions so no stress if you're not keen for those features). With this, you can pretty confidently and privately make use of public networks without exposing your actual device :)
 
 ## Requirements
 1) Pi Zero W: I used a Pi Zero W and I'm sure this will work with a Zero W 2, too! Once the Pi shortage passes and I can get one in my hands I will test this out and update this repo with the results.
-2) (optional) Pi Zero USB Stem: I used this so that I can just plug the Pi straight into my laptop instead of carrying a microUSB-USB adapter. Unfortunately I haven't found a usb-c stem yet, so if anyone reading this knows of one please let me know! I used this one (https://www.sparkfun.com/products/14526) - you can get it in South Africa through PiShop (https://www.pishop.co.za/store/pi-zero-usb-stem), MicroRobotics (https://www.robotics.org.za/KIT-14526), or DIY Electronics (https://www.diyelectronics.co.za/store/breakout-boards/2537-raspberry-pi-zero-usb-adapter-usb-a-connector-for-pi-zero.html?search_query=zero+usb&results=36). I believe that there are also solderless options - so have a quick Google for those if you don't have an iron or are uncomfortable soldering :)
+2) (optional) Pi Zero USB Stem: I used this so that I can just plug the Pi straight into my laptop instead of carrying a microUSB-USB adapter. Unfortunately I haven't found a usb-c stem yet, so if anyone reading this knows of one please let me know! I used [this one](https://www.sparkfun.com/products/14526) - you can get it in South Africa through [PiShop](https://www.pishop.co.za/store/pi-zero-usb-stem), MicroRobotics (https://www.robotics.org.za/KIT-14526), or [DIY Electronics](https://www.diyelectronics.co.za/store/breakout-boards/2537-raspberry-pi-zero-usb-adapter-usb-a-connector-for-pi-zero.html?search_query=zero+usb&results=36). I believe that there are also solderless options - so have a quick Google for those if you don't have an iron or are uncomfortable soldering :)
 
 ## Bake your firmware
 
-Alright, it's time to get started! So the first thing we want to do is load the OpenWRT firmware instead of Raspbian. OpenWRT (https://chef.libremesh.org/?version=21.02.2&target=bcm27xx%2Fbcm2708&id=rpi) have a tool to configure your distribution and bake in packages beforehand. Make sure you have selected "Raspberry Pi B/B+/CM/Zero/ZeroW" and whatever version you would like to run (I used 21.02.2 as that was the latest version when I did this). Then, under the 'Customize' menu, we're going to specify what packages we would like to include - select all under 'Custom package selection' and paste this there instead:
+Alright, it's time to get started! So the first thing we want to do is load the OpenWRT firmware instead of Raspbian. [OpenWRT](https://openwrt.org/) have a [tool](https://chef.libremesh.org/?version=21.02.2&target=bcm27xx%2Fbcm2708&id=rpi) to configure your distribution and bake in packages beforehand. Make sure you have selected "Raspberry Pi B/B+/CM/Zero/ZeroW" and whatever version you would like to run (I used 21.02.2 as that was the latest version when I did this). Then, under the 'Customize' menu, we're going to specify what packages we would like to include - select all under 'Custom package selection' and paste this there instead:
 
 ```
 base-files bcm27xx-gpu-fw busybox ca-bundle cypress-firmware-43430-sdio cypress-nvram-43430-sdio-rpi-zero-w dnsmasq dropbear e2fsprogs firewall fstools ip6tables iptables iwinfo kmod-brcmfmac kmod-fs-vfat kmod-ipt-offload kmod-nls-cp437 kmod-nls-iso8859-1 kmod-sound-arm-bcm2835 kmod-sound-core kmod-usb-hid libc libgcc libustream-wolfssl logd luci mkf2fs mtd netifd odhcp6c odhcpd-ipv6only opkg partx-utils ppp ppp-mod-pppoe procd ucert uci uclient-fetch urandom-seed wpad-basic-wolfssl kmod-usb-gadget-eth kmod-usb-dwc2 kmod-usb-net kmod-mii kmod-usb-core kmod-nls-base kmod-usb-net-cdc-ether kmod-usb-net-rndis luci-app-openvpn openvpn-openssl adguardhome
@@ -23,17 +23,17 @@ And hit 'Request Build'. For some reason, including openvpn and adguardhome some
 base-files bcm27xx-gpu-fw busybox ca-bundle cypress-firmware-43430-sdio cypress-nvram-43430-sdio-rpi-zero-w dnsmasq dropbear e2fsprogs firewall fstools ip6tables iptables iwinfo kmod-brcmfmac kmod-fs-vfat kmod-ipt-offload kmod-nls-cp437 kmod-nls-iso8859-1 kmod-sound-arm-bcm2835 kmod-sound-core kmod-usb-hid libc libgcc libustream-wolfssl logd luci mkf2fs mtd netifd odhcp6c odhcpd-ipv6only opkg partx-utils ppp ppp-mod-pppoe procd ucert uci uclient-fetch urandom-seed wpad-basic-wolfssl kmod-usb-gadget-eth kmod-usb-dwc2 kmod-usb-net kmod-mii kmod-usb-core kmod-nls-base kmod-usb-net-cdc-ether kmod-usb-net-rndis
 ```
 Then just download the image (I think I used 'Factory (EXT4)' but the one you choose shouldn't make a difference).The extra packages we have here will allow us to configure ethernet over USB on the Pi Zero, and are required for us to set the micro-usb port as a network interface. In the case that you're going to be baking another image, these are the additional packages that I've added on top of the default selection:
-- kmod-usb-gadget-eth 
-- kmod-usb-dwc2 
-- kmod-usb-net 
-- kmod-mii 
-- kmod-usb-core 
-- kmod-nls-base 
-- kmod-usb-net-cdc-ether 
-- kmod-usb-net-rndis 
-- luci-app-openvpn 
-- openvpn-openssl 
-- adguardhome
+* kmod-usb-gadget-eth 
+* kmod-usb-dwc2 
+* kmod-usb-net 
+* kmod-mii 
+* kmod-usb-core 
+* kmod-nls-base 
+* kmod-usb-net-cdc-ether 
+* kmod-usb-net-rndis 
+* luci-app-openvpn 
+* openvpn-openssl 
+* adguardhome
 
 With the image downloaded, it's time to flash it to our SD card. Plug the SD card for your Pi into your computer and flash the downloaded image to it using whatever flash utility you'd like (I have always used Balena Etcher (https://www.balena.io/etcher/), so if you haven't got a preference I can recommend you use that). Your image should flash in a couple of seconds - it is ridiculously fast because of how small OpenWRT is!
 
