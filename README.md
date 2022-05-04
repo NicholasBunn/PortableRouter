@@ -38,7 +38,7 @@ With the image downloaded, it's time to flash it to our SD card. Plug the SD car
 
 ## Housekeeping
 
-Okay now you can plug your Pi in and get into it's terminal. I used a keyboard and monitor for this but you should be able to SSH, too. I'm not going to add the instructions to set up SSH here, but this video (https://www.youtube.com/watch?v=_pBf2hGqXL8&ab_channel=DevOdyssey) does a great job of it if you need it. Remember that the OpenWRT OS does not have a GUI itself, but the router does. So even if you do use a monitor, you will only have access to a command line :)
+Okay now you can plug your Pi in and get into it's terminal. I used a keyboard and monitor for this but you should be able to SSH, too. I'm not going to add the instructions to set up SSH here, but [this video](https://www.youtube.com/watch?v=_pBf2hGqXL8&ab_channel=DevOdyssey) does a great job of it if you need it. Remember that the OpenWRT OS does not have a GUI itself, but the router does. So even if you do use a monitor, you will only have access to a command line :)
 
 With access to the command-line, we are going to do some general housekeeping. First, lets enable the wireless interface on our Pi by entering the following commands:
 
