@@ -34,7 +34,7 @@ Then just download the image (I think I used 'Factory (EXT4)' but the one you ch
 * openvpn-openssl 
 * adguardhome
 
-With the image downloaded, it's time to flash it to our SD card. Plug the SD card for your Pi into your computer and flash the downloaded image to it using whatever flash utility you'd like (I have always used Balena Etcher (https://www.balena.io/etcher/), so if you haven't got a preference I can recommend you use that). Your image should flash in a couple of seconds - it is ridiculously fast because of how small OpenWRT is!
+With the image downloaded, it's time to flash it to our SD card. Plug the SD card for your Pi into your computer and flash the downloaded image to it using whatever flash utility you'd like (I have always used [Balena Etcher](https://www.balena.io/etcher/), so if you haven't got a preference I can recommend you use that). Your image should flash in a couple of seconds - it is ridiculously fast because of how small OpenWRT is!
 
 ## Housekeeping
 
