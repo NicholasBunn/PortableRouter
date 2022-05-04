@@ -194,3 +194,131 @@ Now you have a wireless router! If you connact an ethernet cable from your home 
 Now hit save and apply, and everything should be working as inteded! We could do this through command line too, but there is a lot of potential to make a mistake here and to forget something, so instead I opted to use the web (Luci) interface. If you plug the USB stem (or microUSB to USB cable) from the Pi into your laptop, it should show up as an ethernet connection. Now if you log into the Pi using the interface you can scan and connect to any network available in the area! This Pi will now act as an additional router between your device and the router providing the internet :)
 
 ## Adding a VPN
+Just to re-iterate here, I've just documented the steps taken in [Network Chuck's video](https://www.youtube.com/watch?v=jlHWnKVpygw&list=LL&index=7&t=1194s&ab_channel=NetworkChuck) here, you may have a better experience following his video and using this repo to copy and paste codeblocks.
+
+But in the case that you choose to follow these instructions instead - let's get into it :)
+
+Before we do anything else, we need to add a VPN interface, so enter the network file again using:
+```
+vi /etc/config/network
+```
+And add an openvpn network by adding the following to the end of this file:
+```
+config interface 'vpnclient'
+	option ifname 'tun0'
+	option proto 'none'
+```
+Remember, to add text in Vim you need to hit 'i', and to save and quite hit 'esc' followed by ':wq'.
+
+Now, on another device we need to find your VPN server. I use NordVPN so I can use [this link](https://nordvpn.com/servers/tools/) to get mine - just find the server that your VPN offers. On the Nord site, click 'show available protocols' and download the OpenVPN UDP config.
+
+Now we are going to open two terminal sessions on your main machine (the one that you would SSH into the Pi with - this should be the one that you donwloaded the OpenVPN UDP config on).
+
+In the first session, SSH into the Pi and run the following command:
+```
+mdkir /etc/openvpn
+```
+
+Then, in the second session (the one not SSHed into the Pi) navigate into your downloads folder ('cd Download' on Linux) and enter the following command
+```
+scp nameOfDownloadedFile root@IPaddress:/etc/openvpn/client.conf
+```
+where *nameOfDownloadedFile* is the name of the OpenVPN UDP Config file you downloaded, and *IPaddress* is the IPaddress of your Pi (10.71.71.1). This will copy the downloaded config file over onto the Pi
+
+Now, back in the SSH terminal session, we can install the packages required for OpenVPN if you were unsuccessful in baking them into the original image. You can do this using the GUI, too, but I'm documenting the command line approach becase I like command lines. Run the following
+```
+opkg update
+```
+```
+opkg install luci-app-openvpn
+```
+```
+opkg install openvpn-openssl
+```
+And then do a quick reboot with:\
+```
+reboot
+```
+
+Once you're back in the Pi's terminal, set your VPN configuration parameters with
+```
+OVPN_DIR="/etc/openvpn"
+```
+```
+OVPN_ID="client"
+```
+```
+OVPN_USER="USERNAME"
+```
+```
+OVPN_PASS="PASSWORD"
+```
+Where *USERNAME* and *PASSWORD* are the username and password that you use to access you VPN account.
+
+We are now going to save these credentials with the following (the following couple of steps are easiest to just copy and paste if you can):
+```
+umask go=
+cat << EOF >${OVPN_DIR}/${OVPN_ID}.auth
+${OVPN_USER}
+${OVPN_PASS}
+EOF
+````
+
+Then, we are going to configure out VPN service with
+```
+sed -i -e "
+/^auth-user-pass/s/^/#/
+\$a auth-user-pass ${OVPN_ID}.auth
+/^redirect-gateway/s/^/#/
+\$a redirect-gateway def1 ipv6
+" ${OVPN_DIR}/${OVPN_ID}.conf
+/etc/init.d/openvpn restart
+```
+
+And enable VPN management in the GUI with
+```
+ls /etc/openvpn/*conf | while read -r OVPN_CONF
+do
+OVPN_ID="$(basename ${OVPN_CONF%.*} | sed -e "s/\W/_/g")"
+uci -q delete openvpn.${OVPN_ID}
+uci set openvpn.${OVPN_ID}="openvpn"
+uci set openvpn.${OVPN_ID}.enabled="1"
+uci set openvpn.${OVPN_ID}.config="${OVPN_CONF}"
+done
+uci commit openvpn
+/etc/init.d/openvpn restart
+```
+
+Now we want to just reconfigure the firewall so that our VPN works: run the following commands (TODO CHECK WHICH ONE WAS LAN AND WHICH WAS WAN)
+```
+uci rename firewall.@zone[0]="lan"
+```
+```
+uci rename firewall.@zone[1]="wan"
+```
+```
+uci del_list firewall.wan.device="tun+"
+```
+```
+uci add_list firewall.wan.device="tun+"
+```
+```
+uci commit firewall
+```
+```
+/etc/init.d/firewall restart
+```
+
+And then configure Hotplug so that the VPN service isn't restarted when we lose WAN (otherwise this would happen whenever we move around!). Issue the following few commands:
+
+```
+mkdir -p /etc/hotplug.d/online
+cat << "EOF" > /etc/hotplug.d/online/00-openvpn
+/etc/init.d/openvpn restart
+EOF
+cat << "EOF" >> /etc/sysupgrade.cong
+/etc/hotplug.d/online/00-openvpn
+EOF
+```
+
+And your VPN should be running too! Now not only can you connect to networks through your Pi, but your device and privacy is hidden with your VPN!
