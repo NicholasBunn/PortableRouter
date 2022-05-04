@@ -74,30 +74,30 @@ touch ssh
 
 Next, we're going to configure the USB port as a network interface. This allows us to see the Pi as an ethernet device over the same port we use to provide power to the Pi.
 
-If you're not still in the '/boot' diretory, go back there with
+If you're not still in the **/boot** diretory, go back there with
 ```
 cd boot
 ```
 
-Then we will want to edit the 'config.txt' file. Unfortunately, we only have Vim to edit files :( Enter the file with:
+Then we will want to edit the **config.txt** file. Unfortunately, we only have Vim to edit files :( so enter the file with:
 ```
 vi config.txt
 ```
-scroll to the bottom of the file (after "Place your custom settings here"), hit 'i' to insert text, and add the following line:
+scroll to the bottom of the file (after "Place your custom settings here"), hit **'i'** to insert text, and add the following line:
 ```
 dtoverlay=dwc2
 ``` 
-Then, to save and exit hit 'esc' followed by ':wq' to 'write' the changes and 'quit' editing this file.
+Then, to save and exit hit **'esc'** followed by **':wq'** to *write* the changes and *quit* editing this file.
 
-Next, and in the same directory, we want to edit the 'cmdline.txt' file. Enter the file with:
+Next, and in the same directory, we want to edit the **cmdline.txt** file. Enter the file with:
 ```
 vi cmdline.txt
 ```
-and scroll the the end of the line (after 'rootwait'), hit 'i' to insert, add a space and add the following line:
+and scroll the the end of the line (after **rootwait**), hit **'i'** to insert, add a space and add the following line:
 ```
 modules-load=dwc2,g_ether
 ```
-Then exit with 'esc' followed by ':wq' again.
+Then exit with **'esc'** followed by **':wq'** again.
 
 Now move back a directory with
 ```
@@ -117,7 +117,7 @@ and finally
 ```
 ls /etc/modules.d
 ```
-to confirm that 56-g_ether is in the directory.
+to confirm that **56-g_ether** is in the directory.
 
 Let's quickly reboot the device to make sure that these changes have been made. Reboot with
 ```
@@ -154,13 +154,13 @@ Then let's enter the network configuration with
 ```
 vi network
 ```
-and change the lan interface ip address to 10.71.71.1 (or whatever address you'd like to assign this interface actually). then save and close the file with 'esc' and ':wq' again.
+and change the lan interface ip address to **10.71.71.1** (or whatever address you'd like to assign this interface actually). then save and close the file with **'esc'** and **':wq'** again.
 
 Next, let's jump into the firewall configuration with 
 ```
 vi firewall
 ``` 
-and under the 'wan' zone, change 'option input' to 'ACCEPT'. Save and quite with 'esc' and ':wq'
+and under the **wan** zone, change **option input** to **ACCEPT**. Save and quit with **'esc'** and **':wq'**
 
 While we're here, let's give our Pi a hostname so that we don't have to use the IP address every time we want to connect to a new network. Enter the dhcp config with
 ```
@@ -179,17 +179,17 @@ Now we can reboot the Pi again to make sure that our updated configurations are 
 reboot
 ```
 
-Once the Pi has rebooted you should be able to see the network as 'OpenWRT' and you should also be able to connect to the network too (although you won't have internet access yet)! 
+Once the Pi has rebooted you should be able to see the network as **OpenWRT** and you should also be able to connect to the network too (although you won't have internet access yet)! 
 
 ## Configure the network interface
 
-Connect to your Pi's network (OpenWRT) and, in your browser, connect to the GUI using the IP address you set (10.71.71.1) or the hostname you used (router.home). Once here, log in as admin with the password you used right at the beginning.
+Connect to your Pi's network (**OpenWRT**) and, in your browser, connect to the GUI using the IP address you set (**10.71.71.1**) or the hostname you used (**router.home**). Once here, log in as admin with the password you used right at the beginning.
 
-Now you're in the GUI, have a little explore around here if you'd like, it's a really nice interface and there is some great functionality built in!
+Now you're in the GUI, have a little explore around here if you'd like, it's a really nice interface and there is some great functionality built in (I personally thought the signal strength analyser/channel mapper was really cool)! 
 
-When you're ready to carry on, go into '>network>interfaces' to configure our new USB interface. Click on 'add new interface' and name in WAN, use the DHCP client protocol, and select the usb0 interface that we've just added (or the appropriate interface if you're not using the Zero). Finally, in the firewall settings, set he zone setting to wan (the red one).
+When you're ready to carry on, go into >**network**>**interfaces** to configure our new USB interface. Click on **add new interface** and name in **WAN**, use the **DHCP client** protocol, and select the **usb0** interface that we've just added (or the appropriate interface if you're not using the Zero). Finally, in the firewall settings, set the zone setting to **wan** (the red one).
 
-Now you have a wireless router! If you connact an ethernet cable from your home router to the USB port (using an appropriate adapter) you will have internet acces through the Pi's wifi network. But we want things to be the other way around. So while we're on the interfaces tab, we're going to switch things around. Edit the LAN configuration so taht it is assigned usb0 device, and edit the WAN interface configuration so that it is assigned to the br-lan (bridge wide-area network) device.
+Now you have a wireless router! If you connact an ethernet cable from your home router to the USB port (using an appropriate adapter) you will have internet acces through the Pi's wifi network. But we want things to be the other way around. So while we're on the interfaces tab, we're going to switch things around. Edit the **LAN** configuration so that it is assigned **usb0** device, and edit the **WAN** interface configuration so that it is assigned to the **br-lan** (bridge wide-area network) device.
 
 Now hit save and apply, and everything should be working as inteded! We could do this through command line too, but there is a lot of potential to make a mistake here and to forget something, so instead I opted to use the web (Luci) interface. If you plug the USB stem (or microUSB to USB cable) from the Pi into your laptop, it should show up as an ethernet connection. Now if you log into the Pi using the interface you can scan and connect to any network available in the area! This Pi will now act as an additional router between your device and the router providing the internet :)
 
@@ -208,7 +208,7 @@ config interface 'vpnclient'
 	option ifname 'tun0'
 	option proto 'none'
 ```
-Remember, to add text in Vim you need to hit 'i', and to save and quite hit 'esc' followed by ':wq'.
+Remember, to add text in Vim you need to hit **'i'**, and to save and quite hit **'esc'** followed by **':wq'**.
 
 Now, on another device we need to find your VPN server. I use NordVPN so I can use [this link](https://nordvpn.com/servers/tools/) to get mine - just find the server that your VPN offers. On the Nord site, click 'show available protocols' and download the OpenVPN UDP config.
 
@@ -219,11 +219,11 @@ In the first session, SSH into the Pi and run the following command:
 mdkir /etc/openvpn
 ```
 
-Then, in the second session (the one not SSHed into the Pi) navigate into your downloads folder ('cd Download' on Linux) and enter the following command
+Then, in the second session (the one not SSHed into the Pi) navigate into your downloads folder (**'cd Download'** on Linux) and enter the following command
 ```
 scp nameOfDownloadedFile root@IPaddress:/etc/openvpn/client.conf
 ```
-where *nameOfDownloadedFile* is the name of the OpenVPN UDP Config file you downloaded, and *IPaddress* is the IPaddress of your Pi (10.71.71.1). This will copy the downloaded config file over onto the Pi
+where **nameOfDownloadedFile** is the name of the OpenVPN UDP Config file you downloaded, and **IPaddress** is the IPaddress of your Pi (10.71.71.1). This will copy the downloaded config file over onto the Pi
 
 Now, back in the SSH terminal session, we can install the packages required for OpenVPN if you were unsuccessful in baking them into the original image. You can do this using the GUI, too, but I'm documenting the command line approach becase I like command lines. Run the following
 ```
@@ -235,7 +235,7 @@ opkg install luci-app-openvpn
 ```
 opkg install openvpn-openssl
 ```
-And then do a quick reboot with:\
+And then do a quick reboot with:
 ```
 reboot
 ```
@@ -253,7 +253,7 @@ OVPN_USER="USERNAME"
 ```
 OVPN_PASS="PASSWORD"
 ```
-Where *USERNAME* and *PASSWORD* are the username and password that you use to access you VPN account.
+Where **USERNAME** and **PASSWORD** are the username and password that you use to access you VPN account.
 
 We are now going to save these credentials with the following (the following couple of steps are easiest to just copy and paste if you can):
 ```
