@@ -201,7 +201,15 @@ Connect to your Pi's network (**OpenWRT**) and, in your browser, connect to the 
 
 Now you're in the LuCI GUI, have a little explore around here if you'd like, it's a really nice interface and there is some great functionality built in (I personally thought the signal strength analyser/channel mapper - **Status>Channel Analysis** was really cool)! Also, while you're on the home page, take note of how little memory is being used!
 
-When you're ready to carry on, go into >**Network**>**Interfaces** to reconfigure the existing interfaces. Here we are going to change the existing interface so that it is assigned to **usb0** instead of **br-lan**. This is just switching things up so that we are using the 'ethernet' port as our router's 'output' instead of the Wifi chip.
+When you're ready to carry on, go into >**Network**>**Interfaces** to reconfigure the existing interfaces. When you arrive, the page should look like the one below:
+
+![Interaces page](https://github.com/NicholasBunn/PortableRouter/blob/main/images/Interfaces.png)
+
+Here we are going to change the existing interface so that it is assigned to **usb0** instead of **br-lan**. Note that in the above image (the original configuration) the **LAN** interface is assigned to **br-lan**. Hit **'Edit'** and change this assignment so that it is assigned to **usb0** instead (note that in the image below it shows **eth0** because I took these screenshots on a Pi 4 setup so the interface already existed, but these steps are the same).
+
+![Updated interface configuration](https://github.com/NicholasBunn/PortableRouter/blob/main/images/InterfacesUpdate.png)
+
+This is just switching things up so that we are using the 'ethernet' port as our router's 'output' instead of the Wifi chip.
 
 Now hit save and apply, and everything should be working as inteded! We could do this through command line too, but there is a lot of potential to make a mistake here and to forget something, so instead I opted to use the web (Luci) interface. If you plug the USB stem (or microUSB to USB cable) from the Pi into your laptop, it should show up as an ethernet connection. Now if you log into the Pi using the interface you can scan and connect to any network available in the area! To do this, go into **Network>Wireless** and hit **scan** to find all the available networks and connect to the one you'd like to connect to (this would be the public network that you'd like to use the internet from). Enter the passowrd when the popup presents itself and under network, assign bot **wwan** (**wan**) and **lan** to the interface. You can now disable (and remove) the OpenWRT interface as you won't be exposing this device over the wireless interface anymore. This Pi will now act as an additional router between your device and the router providing the internet! :)
 
