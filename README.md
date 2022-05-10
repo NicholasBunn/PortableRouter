@@ -12,7 +12,7 @@ After following these instructions you should have a Pi Zero router that can act
 
 ## Bake your firmware
 
-Alright, it's time to get started! So the first thing we want to do is load the OpenWRT firmware instead of Raspbian. [OpenWRT](https://openwrt.org/) have a [tool](https://chef.libremesh.org/?version=21.02.2&target=bcm27xx%2Fbcm2708&id=rpi) to configure your distribution and bake in packages beforehand. Make sure you have selected "Raspberry Pi B/B+/CM/Zero/ZeroW" and whatever version you would like to run (I used 21.02.2 as that was the latest version when I did this). Then, under the 'Customize' menu, we're going to specify what packages we would like to include - select all under 'Custom package selection' and paste this there instead:
+Alright, it's time to get started! So the first thing we want to do is load the OpenWRT firmware instead of Raspbian. [OpenWRT](https://openwrt.org/) have a [tool](https://chef.libremesh.org/?version=21.02.2&target=bcm27xx%2Fbcm2708&id=rpi) to configure your distribution and bake in packages beforehand. Make sure you have selected "Raspberry Pi B/B+/CM/Zero/ZeroW" (if you are building for a Zero) and whatever version you would like to run (I used 21.02.2 as that was the latest version when I did this). Then, under the 'Customize' menu, we're going to specify what packages we would like to include - select all under 'Custom package selection' and paste this there instead:
 
 ```
 base-files bcm27xx-gpu-fw busybox ca-bundle cypress-firmware-43430-sdio cypress-nvram-43430-sdio-rpi-zero-w dnsmasq dropbear e2fsprogs firewall fstools ip6tables iptables iwinfo kmod-brcmfmac kmod-fs-vfat kmod-ipt-offload kmod-nls-cp437 kmod-nls-iso8859-1 kmod-sound-arm-bcm2835 kmod-sound-core kmod-usb-hid libc libgcc libustream-wolfssl logd luci mkf2fs mtd netifd odhcp6c odhcpd-ipv6only opkg partx-utils ppp ppp-mod-pppoe procd ucert uci uclient-fetch urandom-seed wpad-basic-wolfssl kmod-usb-gadget-eth kmod-usb-dwc2 kmod-usb-net kmod-mii kmod-usb-core kmod-nls-base kmod-usb-net-cdc-ether kmod-usb-net-rndis luci-app-openvpn openvpn-openssl adguardhome
@@ -21,7 +21,9 @@ And hit 'Request Build'. For some reason, including openvpn and adguardhome some
 ```
 base-files bcm27xx-gpu-fw busybox ca-bundle cypress-firmware-43430-sdio cypress-nvram-43430-sdio-rpi-zero-w dnsmasq dropbear e2fsprogs firewall fstools ip6tables iptables iwinfo kmod-brcmfmac kmod-fs-vfat kmod-ipt-offload kmod-nls-cp437 kmod-nls-iso8859-1 kmod-sound-arm-bcm2835 kmod-sound-core kmod-usb-hid libc libgcc libustream-wolfssl logd luci mkf2fs mtd netifd odhcp6c odhcpd-ipv6only opkg partx-utils ppp ppp-mod-pppoe procd ucert uci uclient-fetch urandom-seed wpad-basic-wolfssl kmod-usb-gadget-eth kmod-usb-dwc2 kmod-usb-net kmod-mii kmod-usb-core kmod-nls-base kmod-usb-net-cdc-ether kmod-usb-net-rndis
 ```
-Then just download the image (I think I used 'Factory (EXT4)' but the one you choose shouldn't make a difference).The extra packages we have here will allow us to configure ethernet over USB on the Pi Zero, and are required for us to set the micro-usb port as a network interface. In the case that you're going to be baking another image, these are the additional packages that I've added on top of the default selection:
+Then just download the image (I think I used 'Factory (EXT4)' but the one you choose shouldn't make a difference as long as it's a factory option).The extra packages we have here will allow us to configure ethernet over USB on the Pi Zero, and are required for us to set the micro-usb port as a network interface. In the case that you're going to be baking another image, these are the additional packages that I've added on top of the default selection:
+
+1) For the Pi Zero
 * kmod-usb-gadget-eth 
 * kmod-usb-dwc2 
 * kmod-usb-net 
@@ -30,8 +32,12 @@ Then just download the image (I think I used 'Factory (EXT4)' but the one you ch
 * kmod-nls-base 
 * kmod-usb-net-cdc-ether 
 * kmod-usb-net-rndis 
+
+2) For the VPN setup
 * luci-app-openvpn 
 * openvpn-openssl 
+
+3) For the ad-blocker
 * adguardhome
 
 With the image downloaded, it's time to flash it to our SD card. Plug the SD card for your Pi into your computer and flash the downloaded image to it using whatever flash utility you'd like (I have always used [Balena Etcher](https://www.balena.io/etcher/), so if you haven't got a preference I can recommend you use that). Your image should flash in a couple of seconds - it is ridiculously fast because of how small OpenWRT is!
@@ -71,6 +77,8 @@ touch ssh
 ```
 
 ## Enable the USB network interface (specific to the Pi Zero W)
+
+This section is only required if you're using a Pi Zero, if you're using a Pi 3/4, jump ahead to registering the network interface.
 
 Next, we're going to configure the USB port as a network interface. This allows us to see the Pi as an ethernet device over the same port we use to provide power to the Pi.
 
@@ -130,12 +138,16 @@ ifconfig usb0
 you should see that the interface is now available! 
 
 ## Register the network interface
-With the interface visible, we are now ready to register it as a network interface. Note that if you are using a Wirelss dongle or a normal Pi (3/4) you can pick up from here, just take not of the interface name when you enter 
+With the interface visible, we are now ready to register it as a network interface. Note that if you are using a Wirelss dongle or a normal Pi (3/4) you can pick up from here, just take note of the interface name when you enter. If you would like to use some other interface like a Wireless dongle, these will need to be set up independently, following a similar approach as was done in the previous section. [Network Chuck's](https://www.youtube.com/watch?v=jlHWnKVpygw&list=LL&index=7&t=1194s&ab_channel=NetworkChuck) video explains the process pretty well and you should be able to get going with most interfaces following his instructions.
 ```
 ifconfig
 ```
 
-Let's change into the config directory with
+If you're still in the boot directory, head back to the root with:
+```
+cd ../
+```
+Now that we're all on the same page, let's change into the config directory with
 ```
 cd /etc/config
 ```
@@ -154,7 +166,7 @@ Then let's enter the network configuration with
 ```
 vi network
 ```
-and change the lan interface ip address to **10.71.71.1** (or whatever address you'd like to assign this interface actually). then save and close the file with **'esc'** and **':wq'** again.
+and change the lan interface ip address to **10.71.71.1** (or whatever address you'd like to assign this interface actually). Remember that in Vim if you want to edit the file you will have to insert by pressing **'i'**. You can then save and close the file with **'esc'** and **':wq'** again.
 
 Next, let's jump into the firewall configuration with 
 ```
@@ -164,7 +176,7 @@ and under the **wan** zone, change **option input** to **ACCEPT**. Save and quit
 
 While we're here, let's give our Pi a hostname so that we don't have to use the IP address every time we want to connect to a new network. Enter the dhcp config with
 ```
-vi /etc/config/dhcp
+vi dhcp
 ```
 and add the following lines to the end
 ```
