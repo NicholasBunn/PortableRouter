@@ -195,9 +195,11 @@ Once the Pi has rebooted you should be able to see the network as **OpenWRT** an
 
 ## Configure the network interface
 
-Connect to your Pi's network (**OpenWRT**) and, in your browser, connect to the GUI using the IP address you set (**10.71.71.1**) or the hostname you used (**router.home**). Once here, log in as admin with the password you used right at the beginning.
+Connect to your Pi's network (**OpenWRT**) and, in your browser, connect to the GUI using the IP address you set (**10.71.71.1**) or the hostname you used (**router.home**). Once here, log in as admin with the password you set right at the beginning and you should end up at the page shown below.
 
-Now you're in the GUI, have a little explore around here if you'd like, it's a really nice interface and there is some great functionality built in (I personally thought the signal strength analyser/channel mapper - **Status>Channel Analysis** was really cool)! Also, while you're on the home page, take note of how little memory is being used!
+![Overview/Landing page](https://github.com/NicholasBunn/PortableRouter/blob/main/images/Overview.png)
+
+Now you're in the LuCI GUI, have a little explore around here if you'd like, it's a really nice interface and there is some great functionality built in (I personally thought the signal strength analyser/channel mapper - **Status>Channel Analysis** was really cool)! Also, while you're on the home page, take note of how little memory is being used!
 
 When you're ready to carry on, go into >**Network**>**Interfaces** to reconfigure the existing interfaces. Here we are going to change the existing interface so that it is assigned to **usb0** instead of **br-lan**. This is just switching things up so that we are using the 'ethernet' port as our router's 'output' instead of the Wifi chip.
 
