@@ -168,13 +168,13 @@ Then let's enter the network configuration with
 ```
 vi network
 ```
-and change the lan interface ip address to **10.71.71.1** (or whatever address you'd like to assign this interface actually). Remember that in Vim if you want to edit the file you will have to insert by pressing **'i'**. You can then save and close the file with **'esc'** and **':wq'** again.
+and change the lan interface ip address to **10.70.70.1** (or whatever address you'd like to assign this interface actually). Remember that in Vim if you want to edit the file you will have to insert by pressing **'i'**. You can then save and close the file with **'esc'** and **':wq'** again.
 
 Next, let's jump into the firewall configuration with 
 ```
 vi firewall
 ``` 
-and under the **wan** zone, change **option input** to **ACCEPT**. Save and quit with **'esc'** and **':wq'**
+and under the **wan** zone, change both **option input** and **option forward** to **ACCEPT**. Save and quit with **'esc'** and **':wq'**
 
 While we're here, let's give our Pi a hostname so that we don't have to use the IP address every time we want to connect to a new network. Enter the dhcp config with
 ```
@@ -183,7 +183,7 @@ vi dhcp
 and add the following lines to the end
 ```
 config domain
-	option ip '10.71.71.1'
+	option ip '10.70.70.1'
 	option name 'router.home'
 ```
 You can set the name to anything you would like, I just used a generic name here but why not make it something fun. Also make sure the the IP address here is the same as the one you assigned to your lan interface a couple of steps above!
@@ -197,7 +197,7 @@ Once the Pi has rebooted you should be able to see the network as **OpenWRT** an
 
 ## Configure the network interface
 
-Connect to your Pi's network (**OpenWRT**) and, in your browser, connect to the GUI using the IP address you set (**10.71.71.1**) or the hostname you used (**router.home**). Once here, log in as admin with the password you set right at the beginning and you should end up at the page shown below.
+Connect to your Pi's network (**OpenWRT**) and, in your browser, connect to the GUI using the IP address you set (**10.70.70.1**) or the hostname you used (**router.home**). Once here, log in as admin with the password you set right at the beginning and you should end up at the page shown below.
 
 ![Overview/Landing page](https://github.com/NicholasBunn/PortableRouter/blob/main/images/Overview.png)
 
@@ -211,14 +211,36 @@ Here we are going to change the existing interface so that it is assigned to **u
 
 ![Updated interface configuration](https://github.com/NicholasBunn/PortableRouter/blob/main/images/InterfacesUpdate.png)
 
-This is just switching things up so that we are using the 'ethernet' port as our router's 'output' instead of the Wifi chip.
+This is just switching things up so that we are using the 'ethernet' port as our router's 'output' instead of the Wifi chip. Now you can hit **'Save and apply'** and the interface should become unresponsive. This is expected thought because the Wifi interface that we have been connected over has just been changed! Plug the Pi into your main machine so that we can access it through the USB/eth and everything should be working as inteded! 
 
-Now hit save and apply, and everything should be working as inteded! We could do this through command line too, but there is a lot of potential to make a mistake here and to forget something, so instead I opted to use the web (Luci) interface. If you plug the USB stem (or microUSB to USB cable) from the Pi into your laptop, it should show up as an ethernet connection. Now if you log into the Pi using the interface you can scan and connect to any network available in the area! To do this, go into **Network>Wireless** and hit **scan** to find all the available networks and connect to the one you'd like to connect to (this would be the public network that you'd like to use the internet from). Enter the passowrd when the popup presents itself and under network, assign bot **wwan** (**wan**) and **lan** to the interface. You can now disable (and remove) the OpenWRT interface as you won't be exposing this device over the wireless interface anymore. This Pi will now act as an additional router between your device and the router providing the internet! :)
+We could do this through command line too, but there is a lot of potential to make a mistake here and to forget something, so instead I opted to use the web (Luci) interface. If you plug the USB stem (or microUSB to USB cable) from the Pi into your laptop, it should show up as an ethernet connection. Now if you log into the Pi using the interface you can scan and connect to any network available in the area! To do this, go into **Network>Wireless** and hit **Scan** to find all the available networks and connect to the one you'd like to connect to (this would be the public network that you'd like to use the internet from). 
+
+![Wireless Overview](https://github.com/NicholasBunn/PortableRouter/blob/main/images/Wireless.png)
+
+Enter the password when the popup presents itself and under network assign it the **wan** firewall (the red one).
+
+![Join Wireless Network](https://github.com/NicholasBunn/PortableRouter/blob/main/images/JoinNetwork.png)
+
+Next, assign both **wwan** (**wan**) and **lan** to the interface - as is shown below. 
+
+![Wireless Configuration](https://github.com/NicholasBunn/PortableRouter/blob/main/images/WirelessConfiguration.png)
+
+You can also **Disable** (and **Remove**) the OpenWRT interface as you won't be exposing this device over the wireless interface anymore.
+
+Hit **'Save and Apply'** to commit all of these updates and you Pi will now act as an additional router between your device and the router providing the internet! :) You can use the same process of connecting to networks when you move to new public networks from now on
 
 ## Adding a VPN
 Time to add a VPN to our router for a bit of extra privacy (this step is optional, so skip it if you don't have a VPN)! Just to re-iterate here, I've literally just documented the steps taken in [Network Chuck's video](https://www.youtube.com/watch?v=jlHWnKVpygw&list=LL&index=7&t=1194s&ab_channel=NetworkChuck) here, you may have a better experience following his video and using this repo to copy and paste codeblocks.
 
 But in the case that you choose to follow these instructions instead - let's get into it :)
+
+Firstly, I really recommend SSHing into the Pi for these next steps as these commands are so easy to type wrong so I'd rather copy and paste. Also, we will need to SSH soon anyways so may as well get going now. Remember that if you're pasting into a terminal window you use '**ctrl**' + '**shift**' + '**v**' instead of the normal '**ctrl**' + '**v**'! If you've plugged the Pi into you main machine, you can SSH from the terminal using:
+```
+sudo ssh root@10.70.70.1
+```
+Then hit yes if you get some fingerprint notices and enter the appropriate passwords when you're prompted for it.
+
+Cool, now to *actually* get started with the VPN stuff
 
 Before we do anything else, we need to add a VPN interface, so enter the network file again using:
 ```
@@ -241,13 +263,13 @@ In the first session, SSH into the Pi and run the following command:
 mdkir /etc/openvpn
 ```
 
-Then, in the second session (the one not SSHed into the Pi) navigate into your downloads folder (**'cd Download'** on Linux) and enter the following command
+Then, in the second session (the one not SSHed into the Pi) navigate into your downloads folder (**'cd Downloads'** on Linux) and enter the following command
 ```
 scp nameOfDownloadedFile root@IPaddress:/etc/openvpn/client.conf
 ```
-where **nameOfDownloadedFile** is the name of the OpenVPN UDP Config file you downloaded, and **IPaddress** is the IPaddress of your Pi (10.71.71.1). This will copy the downloaded config file over onto the Pi
+where **nameOfDownloadedFile** is the name of the OpenVPN UDP Config file you downloaded, and **IPaddress** is the IP address of your Pi (10.70.70.1). This will copy the downloaded config file over onto the Pi. You might have to sudo this, and you will have to enter your Pi's password too (the same one we used to SSH in and set wayyyyyy back at the beginning of this all).
 
-Now, back in the SSH terminal session, we can install the packages required for OpenVPN if you were unsuccessful in baking them into the original image. You can do this using the GUI, too, but I'm documenting the command line approach becase I like command lines. Run the following
+Now, back in the SSH terminal session, we can install the packages required for OpenVPN if you were unsuccessful in baking them into the original image. Run the following
 ```
 opkg update
 ```
@@ -257,12 +279,16 @@ opkg install luci-app-openvpn
 ```
 opkg install openvpn-openssl
 ```
+You can also install packages using LuCI, just go under **System>Software**. To update, hit **Update Lists** and then you can search and install the packages listed at the beginning of this repo under **'Download and install package'**.
+
+![Package Management](https://github.com/NicholasBunn/PortableRouter/blob/main/images/Packages.png)
+
 And then do a quick reboot with:
 ```
 reboot
 ```
 
-Once you're back in the Pi's terminal, set your VPN configuration parameters with
+SSH back into the Pi now and once you're the terminal again, set your VPN configuration parameters with
 ```
 OVPN_DIR="/etc/openvpn"
 ```
@@ -343,4 +369,83 @@ cat << "EOF" >> /etc/sysupgrade.cong
 EOF
 ```
 
-And your VPN should be running too! Now not only can you connect to networks through your Pi, but your device and privacy is hidden with your VPN!
+And your VPN should be running too! You should see a **VPN** tab next to **Network** now - which is where you can control VPN config through the GUI.
+
+Now not only can you connect to networks through your Pi, but your device and privacy is hidden with your VPN! We can verify this by Googling "What is my IP address" and then Googling the public IP address that you are presented with. Mine was shown to belong to NordVPN (because that's the VPN service I use - so yours might be slightly different) :)
+
+## Adding an ad-blocker
+
+OpenVPN provides native support for running AdGuard Home as an ad-blocker - which means that you can run the ad-blocker on your router itself instead of running it on a seperate machine as you would with something like Pi-Hole! I haven't actually used Pi-Hole so I can't compare the performances, but I've enjoyed having AdGuard Home running so far!
+
+So the first thing we want to do is update and install the AdGuard Home package if you weren't succesful in baking it in earlier. You can do this by running
+```
+opkg update
+```
+and
+```
+opkg install adguardhome
+```
+or by using LuCI (as was shown in the VPN section, above).
+
+With the packages installed, we want to set the AdGuard Home service to start on boot with
+```
+service adguardhome enable
+```
+and then actually start it with
+```
+service adguardhome start
+```
+There is a way to set this up through command line, and it is documented [Here](https://openwrt.org/docs/guide-user/services/dns/adguard-home), but if we do it through the AdGuard GUI we get to check out all the cool monitoring features available!
+
+Lets open up the interface by going to the below address in our browser. Replace **10.70.70.1** with whatever IP address you assigned earlier.
+```
+http://10.70.70.1:3000
+```
+You should arrive at a set up page, hit **'Get Started'** to begin. The first thing we'll do is set the Admin Web Interface to listen on 10.70.70.1 at port 8080 (instead of the default 80) - obviously change the IP address to reflect yours here. While we're on this page, also change the DNS server to listen on 10.70.70.1 at port 53. If you have an error telling you that port 53 is already in use - that means that DNSMasq is currently still running on the Pi. So back in the Pi's terminal (or on your SSH session) enter 
+```
+service dnsmasq stop
+```
+and 
+```
+service dnsmasq disable
+```
+and try the above steps again. Your page should look like this (without the 'bind: already in use' error):
+
+![AdGuard Set Up - Page 2](https://github.com/NicholasBunn/PortableRouter/blob/main/images/AdguardConfig2.png)
+
+You can now hit **'Next'**.
+
+Create a username and password for your AdGuard server (it doesn't have to be the same as the one you use on your Pi, just make sure you remember it). and hit **'Next'**, again.
+
+On the fourth page, you can leave AdGuard Home configured as a router (as that;s exactly how it's running). So just hit **'Next'** and **'Open Dashboard'**!
+
+Enter the same credentials you just set for AdGuard Home and have a little explore around the interface! The GUI is also really cool if you like metrics, and it's quite interesting to have a look around once you've been using it for a short while.
+
+![AdGuard Home Page](https://github.com/NicholasBunn/PortableRouter/blob/main/images/AdguardHome.png)
+
+There are a whole bunch of things for you to configure here, such as your upstream DNS servers, rate limits, etc. but I'm not going to cover AdGuard's features in this guide! We are just going to do two more things for our configuration. I don't think these are strictly neessary as we will only have one device connected ata time most likely. But in the case that you have configured a Wifi dongle or are expecting multiple connections, this is good practice.
+
+First, we are going to update Upstream DNS Server configuration so that it will accept LAN domain requests and pass the to OpenWRT itself. To do this, go to **Settings>DNS Settings>Upstream Servers** and now enter
+```
+[/lan/]127.0.0.1:53
+[//]127.0.0.1:53
+```
+and hit **'Apply'**, below. You can also hit **'Test upstreams'** if you'd like to just verify things quickly.
+
+![AdGuard DNS Settings](https://github.com/NicholasBunn/PortableRouter/blob/main/images/DNSSettings.png)
+
+Next, we're going to run a Reverse DNS so that AdGuard Home picks up DHCP assignment from OpenWRT. On the same page (**Settings>DNS Settings**) scroll down until you get to **'Private reverse DNS servers'** and add
+```
+10.70.70.1:53
+```
+Also ensure that **'Use private reverse DNS resolvers'** and **'Enable reverse resolving of clients IP addresses'** are selected before hitting **'Apply'**
+
+Finally, you can configure your filters under the **Filters** tab, to control which traffic you allow through. Go into **Filters>DNS blocklists** and scroll through to select some of the pre-configured lists. Hit **'Add blocklist'** to scroll through some more options, or to add your own!
+
+![AdGuard DNS Blocklist](https://github.com/NicholasBunn/PortableRouter/blob/main/images/DNSBlocklist.png)
+
+Just note that the more lists you use, the more memory is required. I selected all the available lists on my Zero and the memory usage did increase notably, however, it was still in the green and I didn't notice any performance issues :)
+
+Now your ad-blocker should be working! Test it out by jumping onto a webiste that you find usually has a bunch of ads on it. Where ads used to be, there should be blank boxes as the element cannot be populaed by the ad anymore! Remember that this isn't going to work for things like Youtube ads as those ads are coming from a Google address, so they are not on our blocklist!
+
+And that's that! You now have a portable, plug-and-play router that you can use to securely connect to public networks while being hidden by your VPN and shielded from most ads! Next up, I'm planning to add NginX as a reverse proxy so that we can resolve to 10.70.70.1:8080 using a hostname like 'router.adguard' - just need to find a couple of minuted outside of life to do that but it shouldn't be too far away!
