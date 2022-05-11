@@ -209,7 +209,7 @@ When you're ready to carry on, go into >**Network**>**Interfaces** to reconfigur
 
 Here we are going to change the existing interface so that it is assigned to **usb0** instead of **br-lan**. Note that in the above image (the original configuration) the **LAN** interface is assigned to **br-lan**. Hit **'Edit'** and change this assignment so that it is assigned to **usb0** instead (note that in the image below it shows **eth0** because I took these screenshots on a Pi 4 setup so the interface already existed, but these steps are the same).
 
-![Updated interface configuration](https://github.com/NicholasBunn/PortableRouter/blob/main/images/InterfacesUpdate.png)
+![Updated interface configuration](https://github.com/NicholasBunn/PortableRouter/blob/main/images/InterfaceConfiguration.png)
 
 This is just switching things up so that we are using the 'ethernet' port as our router's 'output' instead of the Wifi chip. Now you can hit **'Save and apply'** and the interface should become unresponsive. This is expected thought because the Wifi interface that we have been connected over has just been changed! Plug the Pi into your main machine so that we can access it through the USB/eth and everything should be working as inteded! 
 
@@ -442,7 +442,7 @@ Also ensure that **'Use private reverse DNS resolvers'** and **'Enable reverse r
 
 Finally, you can configure your filters under the **Filters** tab, to control which traffic you allow through. Go into **Filters>DNS blocklists** and scroll through to select some of the pre-configured lists. Hit **'Add blocklist'** to scroll through some more options, or to add your own!
 
-![AdGuard DNS Blocklist](https://github.com/NicholasBunn/PortableRouter/blob/main/images/DNSBlocklist.png)
+![AdGuard DNS Blocklist](https://github.com/NicholasBunn/PortableRouter/blob/main/images/DNSBlocklists.png)
 
 Just note that the more lists you use, the more memory is required. I selected all the available lists on my Zero and the memory usage did increase notably, however, it was still in the green and I didn't notice any performance issues :)
 
