@@ -269,13 +269,13 @@ Here we are going to change the existing interface so that it is assigned to **u
 
 ![Updated interface configuration](https://github.com/NicholasBunn/PortableRouter/blob/main/Figures/InterfaceConfiguration.png)
 
-This is just switching things up so that we are accepting connections on the 'ethernet' port instead of the Wifi chip. Now you can hit **'Save and apply'** and the interface should become unresponsive. This is expected thought because the Wifi interface that we have been connected over has just been changed! Plug the Pi into your main machine so that we can access it through the USB/eth and everything should be working as inteded!
+This is just switching things up so that we are accepting connections on the 'ethernet' port instead of the Wifi chip. Now you can hit **'Save and apply'** and the interface should become unresponsive. This is expected thought because the Wifi interface that we have been connected over has just been changed! Plug the Pi into your main machine so that we can access it through the USB/eth and everything should be working as intended!
 
-We could do this through command line too, but there is a lot of potential to make a mistake here and to forget something, so instead I opted to use the web (Luci) interface. If you plug the USB stem (or microUSB to USB cable) from the Pi into your laptop, it should show up as an ethernet connection. Now if you log into the Pi using the interface you can scan and connect to any network available in the area! To do this, go into **Network>Wireless** and hit **Scan** to find all the available networks and connect to the one you'd like to connect to (this would be the public network that you'd like to use the internet from).
+We could do this through command line too, but there is potential to make a mistake here and to forget something, so instead I opted to use the web (Luci) interface. If you plug the USB stem (or microUSB-USB cable) from the Pi into your laptop, it should show up as an ethernet connection. Now if you log into the Pi using the interface you can scan and connect to any network available in the area! To do this, go into **Network>Wireless** and hit **Scan** to find all the available networks and connect to the one you'd like to connect to (this would be the public network that you'd like to use the internet from).
 
 ![Wireless Overview](https://github.com/NicholasBunn/PortableRouter/blob/main/Figures/Wireless.png)
 
-Enter the password when the popup presents itself and under network assign it the **wan** firewall (the red one).
+Enter the network's password when the popup presents itself and under **'network'** assign it the **wan** firewall (the red one).
 
 ![Join Wireless Network](https://github.com/NicholasBunn/PortableRouter/blob/main/Figures/JoinNetwork.png)
 
@@ -285,7 +285,7 @@ Next, assign both **wwan** (**wan**) and **lan** to the interface - as is shown 
 
 You can also **Disable** (and **Remove**) the OpenWRT interface as you won't be exposing this device over the wireless interface anymore.
 
-Hit **'Save and Apply'** to commit all of these updates and you Pi will now act as an additional router between your device and the router providing the internet! :) You can use the same process of connecting to networks when you move to new public networks from now on
+Hit **'Save and Apply'** to commit all of these updates and your Pi will now act as an additional router between your device and the router providing the internet! :) You can use the same process of connecting to networks when you move to new public networks from now on
 
 ## Adding a VPN
 
