@@ -181,7 +181,7 @@ you should see that the interface is now available!
 
 ## Register the network interface
 
-With the interface visible, we are now ready to register it as a network interface. Note that if you are using a Wirelss dongle or a normal Pi (3/4) you can pick up from here, just take note of the interface name when you enter. If you would like to use some other interface like a Wireless dongle, these will need to be set up independently, following a similar approach as was done in the previous section. [Network Chuck's](https://www.youtube.com/watch?v=jlHWnKVpygw&list=LL&index=7&t=1194s&ab_channel=NetworkChuck) video explains the process pretty well and you should be able to get going with most interfaces following his instructions.
+With the interface visible, we are now ready to register it as a network interface. Note that if you are using a Wireless dongle or a normal Pi (3/4) you can pick up from here, just take note of the interface name when you enter **ifconfig** (it might not be usb0). If you would like to use some other interface like a Wireless dongle, these will need to be set up independently, following a similar approach as was done in the previous section. [Network Chuck's](https://www.youtube.com/watch?v=jlHWnKVpygw&list=LL&index=7&t=1194s&ab_channel=NetworkChuck) video explains the process pretty well and you should be able to get going with most interfaces following his instructions.
 
 ```
 ifconfig
