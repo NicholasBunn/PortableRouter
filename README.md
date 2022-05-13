@@ -293,7 +293,7 @@ Time to add a VPN to our router for a bit of extra privacy (this step is optiona
 
 But in the case that you choose to follow these instructions instead - let's get into it :)
 
-Firstly, I really recommend SSHing into the Pi for these next steps as these commands are so easy to type wrong so I'd rather copy and paste. Also, we will need to SSH soon anyways so may as well get going now. Remember that if you're pasting into a terminal window you use '**ctrl**' + '**shift**' + '**v**' instead of the normal '**ctrl**' + '**v**'! If you've plugged the Pi into you main machine, you can SSH from the terminal using:
+Firstly, I really recommend SSHing into the Pi for these next steps as these commands are so easy to type wrong so I'd rather copy and paste. Also, we will need to SSH soon anyways so may as well get going now. Remember that if you're pasting into a terminal window you use '**ctrl**' + '**shift**' + '**v**' instead of the normal '**ctrl**' + '**v**'! If you've plugged the Pi into your main machine, you can SSH from the terminal using:
 
 ```
 sudo ssh root@10.70.70.1
@@ -317,7 +317,7 @@ config interface 'vpnclient'
 	option proto 'none'
 ```
 
-Remember, to add text in Vim you need to hit **'i'**, and to save and quite hit **'esc'** followed by **':wq'**.
+Remember, to add text in Vim you need to hit **'i'**, and to save and quit hit **'esc'** followed by **':wq'**.
 
 Now, on another device we need to find your VPN server. I use NordVPN so I can use [this link](https://nordvpn.com/servers/tools/) to get mine - just find the server that your VPN offers. On the Nord site, click 'show available protocols' and download the OpenVPN UDP config.
 
@@ -403,7 +403,7 @@ sed -i -e "
 /etc/init.d/openvpn restart
 ```
 
-And enable VPN management in the GUI with
+And enable VPN management in the LuCI GUI with
 
 ```
 ls /etc/openvpn/*conf | while read -r OVPN_CONF
@@ -418,7 +418,7 @@ uci commit openvpn
 /etc/init.d/openvpn restart
 ```
 
-Now we want to just reconfigure the firewall so that our VPN works: run the following commands (TODO CHECK WHICH ONE WAS LAN AND WHICH WAS WAN)
+Now we want to just reconfigure the firewall so that our VPN works - run the following commands:
 
 ```
 uci rename firewall.@zone[0]="lan"
@@ -456,9 +456,9 @@ cat << "EOF" >> /etc/sysupgrade.cong
 EOF
 ```
 
-And your VPN should be running too! You should see a **VPN** tab next to **Network** now - which is where you can control VPN config through the GUI.
+And your VPN should be running too! You should see a **VPN** tab next to **Network** now in LuCI - which is where you can control VPN config through the GUI.
 
-Now not only can you connect to networks through your Pi, but your device and privacy is hidden with your VPN! We can verify this by Googling "What is my IP address" and then Googling the public IP address that you are presented with. Mine was shown to belong to NordVPN (because that's the VPN service I use - so yours might be slightly different) :)
+Now not only can you connect to networks through your Pi, but your main machine is hidden by your VPN! We can verify this by Googling "What is my IP address" and then Googling the public IP address that you are presented with. Mine was shown to belong to NordVPN (because that's the VPN service I use - so yours might be slightly different) :)
 
 ## Adding an ad-blocker
 
@@ -518,13 +518,13 @@ You can now hit **'Next'**.
 
 Create a username and password for your AdGuard server (it doesn't have to be the same as the one you use on your Pi, just make sure you remember it). and hit **'Next'**, again.
 
-On the fourth page, you can leave AdGuard Home configured as a router (as that;s exactly how it's running). So just hit **'Next'** and **'Open Dashboard'**!
+On the fourth page, you can leave AdGuard Home configured as a router (as that's exactly how it's running). So just hit **'Next'** and **'Open Dashboard'**!
 
 Enter the same credentials you just set for AdGuard Home and have a little explore around the interface! The GUI is also really cool if you like metrics, and it's quite interesting to have a look around once you've been using it for a short while.
 
 ![AdGuard Home Page](https://github.com/NicholasBunn/PortableRouter/blob/main/Figures/AdguardHome.png)
 
-There are a whole bunch of things for you to configure here, such as your upstream DNS servers, rate limits, etc. but I'm not going to cover AdGuard's features in this guide! We are just going to do two more things for our configuration. I don't think these are strictly neessary as we will only have one device connected ata time most likely. But in the case that you have configured a Wifi dongle or are expecting multiple connections, this is good practice.
+There are a whole bunch of things for you to configure here, such as your upstream DNS servers, rate limits, etc. but I'm not going to cover AdGuard's features in this guide! We are just going to do two more things for our configuration. I don't think these are strictly neessary as we will only have one device connected at a time most likely. But in the case that you have configured a Wifi dongle or are expecting multiple connections, this is good practice.
 
 First, we are going to update Upstream DNS Server configuration so that it will accept LAN domain requests and pass the to OpenWRT itself. To do this, go to **Settings>DNS Settings>Upstream Servers** and now enter
 
@@ -551,6 +551,6 @@ Finally, you can configure your filters under the **Filters** tab, to control wh
 
 Just note that the more lists you use, the more memory is required. I selected all the available lists on my Zero and the memory usage did increase notably, however, it was still in the green and I didn't notice any performance issues :)
 
-Now your ad-blocker should be working! Test it out by jumping onto a webiste that you find usually has a bunch of ads on it. Where ads used to be, there should be blank boxes as the element cannot be populaed by the ad anymore! Remember that this isn't going to work for things like Youtube ads as those ads are coming from a Google address, so they are not on our blocklist!
+Now your ad-blocker should be working! Test it out by jumping onto a webiste that you find usually has a bunch of ads on it. Where ads used to be, there should be blank boxes as the element cannot be populated by the ad anymore! Remember that this isn't going to work for things like Youtube ads as those ads are coming from a Google address, so they are not on our blocklist!
 
-And that's that! You now have a portable, plug-and-play router that you can use to securely connect to public networks while being hidden by your VPN and shielded from most ads! Next up, I'm planning to add NginX as a reverse proxy so that we can resolve to 10.70.70.1:8080 using a hostname like 'router.adguard' - just need to find a couple of minuted outside of life to do that but it shouldn't be too far away!
+And that's that! You now have a portable, plug-and-play router that you can use to securely connect to public networks while being hidden by your VPN and shielded from most ads! Next up, I'm planning to add NginX as a reverse proxy so that we can resolve to 10.70.70.1:8080 using a hostname like 'router.adguard' - just need to find a couple of minutes outside of life to do that but it shouldn't be too far away!
