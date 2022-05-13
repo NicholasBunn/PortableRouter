@@ -1,6 +1,6 @@
 # Portable Pi Router
 
-![Portable Router with Pi Zero W](https://github.com/NicholasBunn/PortableRouter/blob/main/Figures/CoverPhoto.jpg)
+![Portable Router with Pi Zero W](https://github.com/NicholasBunn/PortableRouter/blob/main/Figures/CoverPhoto.JPG)
 
 This repo documents the process of configuring a Raspberry Pi Zero W as a portable router, capable of chanelling wifi signals to our device over ethernet (or more suitably, ethernet over USB). For this project, I've used OpenWRT to run the Pi as a Router, instead of configuring Raspbian itself. OpenWRT has insanely low resource requirements and runs phenominally on the Zeros - it also has a great interface and removes all the bloat we would have with Raspbian! OpenWRT is running Linux under the hood which means I immediately liked it, but also means all of our normal Raspbian commands will work in the terminal. Most of the steps are pretty standard across OpenWRT disributions so you should be able to apply these steps to most Pi's (I've tried to mark the ones specific to the Zero).
 
